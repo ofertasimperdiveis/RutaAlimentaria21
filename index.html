@@ -77,14 +77,17 @@
     }
 
     .avatar,
-    .bot-avatar,
-    .user-avatar {
+    .bot-avatar {
       border-radius: 50%;
       background:
-        radial-gradient(circle at 50% 34%, #f0d1b7 0 16%, transparent 17%),
-        radial-gradient(circle at 50% 76%, #f8f8f8 0 29%, transparent 30%),
-        linear-gradient(135deg, #6d8d84, #d7eee7);
+        url("public/assets/ruta-alimentaria-avatar.png") center / cover no-repeat,
+        #f8f4e9;
       box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .55);
+      flex: 0 0 auto;
+    }
+
+    .user-avatar {
+      border-radius: 50%;
       flex: 0 0 auto;
     }
 
@@ -111,6 +114,18 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .verified {
+      width: 20px;
+      height: 20px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: #2ecc71;
+      font-size: .86rem;
+      line-height: 1;
     }
 
     .status {
@@ -459,6 +474,102 @@
       font-size: .86rem;
     }
 
+    .testimonials-container {
+      width: min(100%, 560px);
+      margin: 10px auto;
+      display: grid;
+      gap: 14px;
+    }
+
+    .testimonial-card {
+      overflow: hidden;
+      border: 1px solid rgba(7, 94, 84, .12);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
+    }
+
+    .testimonial-zoom {
+      width: 100%;
+      border: 0;
+      padding: 0;
+      display: block;
+      background: transparent;
+    }
+
+    .testimonial-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+    }
+
+    .testimonial-identity {
+      padding: 10px 14px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .testimonial-identity strong {
+      color: var(--brand);
+    }
+
+    .testimonial-identity span {
+      color: #68736f;
+      font-size: .86rem;
+    }
+
+    .testimonial-fallback {
+      width: min(100%, 560px);
+      margin: 10px auto;
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: #475451;
+      background: #fff;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, .08);
+      font-size: 1rem;
+      line-height: 1.38;
+    }
+
+    .image-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      background: rgba(0, 0, 0, .72);
+    }
+
+    .image-modal.visible {
+      display: flex;
+    }
+
+    .image-modal img {
+      max-width: min(100%, 900px);
+      max-height: 88vh;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, .28);
+    }
+
+    .modal-close {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 50%;
+      color: #fff;
+      background: rgba(7, 94, 84, .95);
+      font-size: 1.65rem;
+      line-height: 1;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, .24);
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: .001ms !important;
@@ -512,6 +623,12 @@
 
       .title {
         font-size: 1rem;
+      }
+
+      .verified {
+        width: 16px;
+        height: 16px;
+        font-size: .72rem;
       }
 
       .status {
@@ -605,18 +722,31 @@
         min-height: 56px;
         font-size: 1rem;
       }
+
+      .testimonials-container {
+        width: 100%;
+        gap: 10px;
+      }
+
+      .testimonial-identity {
+        padding: 8px 11px 10px;
+      }
+
+      .image-modal {
+        padding: 12px;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="app" aria-label="Conversación Ruta Alimentaria 21">
+  <main class="app" aria-label="Conversacion Ruta Alimentaria 21">
     <header class="header">
       <div class="identity">
         <button class="back" id="backBtn" type="button" title="Volver" aria-label="Volver">‹</button>
         <div class="avatar" aria-hidden="true"></div>
         <div>
-          <p class="title">Ana — Asistente virtual</p>
-          <p class="status">orientación automatizada</p>
+          <p class="title">Ana Ruta <span class="verified" aria-label="verificado">✓</span></p>
+          <p class="status">online</p>
         </div>
       </div>
     </header>
@@ -636,49 +766,82 @@
       refundDays: 7
     };
 
+    const testimonials = [
+      {
+        id: "maria-fernanda",
+        image: "public/testimonials/testimonial-maria-fernanda.png",
+        name: "María Fernanda",
+        location: "",
+        alt: "Depoimento de María Fernanda sobre Ruta Alimentaria 21",
+        consentVerified: true,
+        active: true
+      },
+      {
+        id: "valentina-gomez",
+        image: "public/testimonials/testimonial-valentina-gomez.png",
+        name: "Valentina Gómez",
+        location: "",
+        alt: "Depoimento de Valentina Gómez sobre Ruta Alimentaria 21",
+        consentVerified: true,
+        active: true
+      },
+      {
+        id: "camila-rodriguez",
+        image: "public/testimonials/testimonial-camila-rodriguez.png",
+        name: "Camila Rodríguez",
+        location: "",
+        alt: "Depoimento de Camila Rodríguez sobre Ruta Alimentaria 21",
+        consentVerified: true,
+        active: true
+      }
+    ];
+
+    const testimonialTransparency = "Experiencias compartidas con autorización. Los resultados y percepciones pueden variar según la rutina de cada persona.";
+    const testimonialDisclaimer = "Cada experiencia es individual. Ruta Alimentaria 21 es una guía educativa de organización alimentaria y no promete resultados médicos ni transformaciones garantizadas.";
+
     const painCopy = {
       ideas: {
-        recognition: "Tener que decidir cada comida desde cero puede volver la rutina innecesariamente pesada.",
-        desiredOutcome: "una estructura sencilla que te diga qué preparar sin empezar de cero",
+        recognition: "Tener que decidir cada comida desde cero puede volver la rutina innecesariamente pesada.\n\nY cuando no existe una opción definida, lo más rápido suele ganar, incluso cuando querías hacer algo diferente.",
+        desiredOutcome: "opciones definidas para no empezar desde cero cada vez que llega la hora de comer",
         offerBridge: "un menú organizado con alternativas para no depender de la improvisación"
       },
       variety: {
-        recognition: "Repetir siempre las mismas comidas puede hacer que una rutina útil se vuelva difícil de mantener.",
+        recognition: "Repetir siempre las mismas comidas puede hacer que una rutina útil se vuelva difícil de mantener.\n\nEl problema no suele ser falta de intención, sino falta de combinaciones simples para variar sin complicarte.",
         desiredOutcome: "más variedad sin aumentar la complejidad",
         offerBridge: "combinaciones y sustituciones que ayudan a variar con ingredientes comunes"
       },
       family: {
-        recognition: "Organizar comidas para varias personas exige conciliar tiempo, cantidad y preferencias diferentes.",
+        recognition: "Organizar comidas para varias personas exige conciliar tiempo, cantidad y preferencias diferentes.\n\nCuando no hay una estructura, cada comida se convierte en una nueva negociación.",
         desiredOutcome: "una planificación adaptable para más de una persona",
         offerBridge: "una estructura que permite ajustar cantidades y hacer sustituciones"
       },
       preparation: {
-        recognition: "Cuando no hay nada preparado, la opción más rápida suele ganar, aunque no sea la que habías planeado.",
+        recognition: "Cuando no hay nada preparado, la opción más rápida suele ganar, aunque no sea la que habías planeado.\n\nPor eso ayuda tener decisiones resueltas antes de que llegue el momento de comer.",
         desiredOutcome: "dejar algunas decisiones resueltas antes de que llegue el momento de comer",
         offerBridge: "listas y preparaciones simples para reducir decisiones de última hora"
       },
       convenience: {
-        recognition: "Elegir lo más rápido no siempre es falta de voluntad; muchas veces es falta de una alternativa igualmente práctica.",
+        recognition: "Elegir lo más rápido no siempre es falta de voluntad; muchas veces es falta de una alternativa igualmente práctica.\n\nSi la opción práctica ya está definida, mantener una rutina se vuelve mucho más sencillo.",
         desiredOutcome: "opciones rápidas que ya estén definidas",
         offerBridge: "recetas cortas y alternativas para los días más ocupados"
       },
       consistency: {
-        recognition: "Comenzar es más fácil que mantener una rutina cuando el plan exige demasiado todos los días.",
+        recognition: "Empezar una rutina suele ser fácil. Lo difícil es mantenerla cuando el plan exige demasiado tiempo y demasiadas decisiones todos los días.",
         desiredOutcome: "un sistema suficientemente sencillo para continuar durante la semana",
         offerBridge: "una organización realista con sustituciones para los días que no salen como esperabas"
       },
       cost: {
-        recognition: "Una alimentación más organizada no debería depender de productos especiales o difíciles de encontrar.",
+        recognition: "Una alimentación más organizada no debería depender de productos especiales o difíciles de encontrar.\n\nEl problema no siempre es el precio de un alimento. Muchas veces es comprar sin saber cómo aprovecharlo durante la semana.",
         desiredOutcome: "un plan construido con ingredientes comunes",
         offerBridge: "listas de compras y alternativas que priorizan practicidad y costo"
       },
       waste: {
-        recognition: "Comprar sin una planificación clara puede generar desperdicio y aumentar el gasto de la semana.",
+        recognition: "Comprar sin una planificación clara puede generar desperdicio y aumentar el gasto de la semana.\n\nCuando sabes para qué sirve cada ingrediente, la compra deja de depender de la improvisación.",
         desiredOutcome: "comprar con una idea más clara de cómo utilizar cada ingrediente",
         offerBridge: "listas semanales organizadas para aprovechar mejor las compras"
       },
       substitutions: {
-        recognition: "Un plan deja de ser util cuando depende de un ingrediente que no encuentras o no quieres comprar.",
+        recognition: "Un plan deja de ser útil cuando depende de un ingrediente que no encuentras o no quieres comprar.\n\nPor eso las sustituciones importan: te permiten continuar sin abandonar toda la estructura.",
         desiredOutcome: "tener alternativas claras para continuar sin abandonar la organización",
         offerBridge: "una tabla de sustituciones para adaptar el plan a tu realidad"
       }
@@ -687,15 +850,18 @@
     const timeCopy = {
       "10_15": {
         intro: "Entonces necesitamos priorizar preparaciones realmente cortas, no recetas que solo parecen rápidas.",
-        text: "entre 10 y 15 minutos"
+        text: "entre 10 y 15 minutos",
+        natural: "normalmente tienes poco tiempo para cocinar"
       },
       "20_30": {
         intro: "Ese tiempo permite preparar opciones simples con un poco más de variedad, siempre que las decisiones ya estén organizadas.",
-        text: "entre 20 y 30 minutos"
+        text: "entre 20 y 30 minutos",
+        natural: "tienes un margen razonable para preparar algo sencillo"
       },
       variable: {
         intro: "En ese caso, el plan necesita funcionar tanto en días tranquilos como en días con poco tiempo.",
-        text: "variable según el día"
+        text: "variable según el día",
+        natural: "tu tiempo cambia bastante según el día"
       }
     };
 
@@ -706,48 +872,32 @@
     };
 
     const supportCopy = {
-      menu: "Como elegiste un menú organizado, la oferta empieza por el plan de 21 días: una secuencia clara para saber qué preparar sin decidir desde cero.",
-      shopping_list: "Como elegiste una lista de compras clara, la oferta destaca las listas semanales y la forma de comprar con más intención antes de cocinar.",
-      recipes: "Como elegiste recetas y sustituciones, la oferta empieza por las preparaciones rápidas y las alternativas para adaptar cada comida."
+      menu: {
+        summary: "por eso comenzar por un menú ya organizado puede ayudarte a resolver la semana con más claridad.",
+        offerIntro: "Como me dijiste que un menú organizado sería lo más útil para ti, esa será una de las partes centrales de la presentación."
+      },
+      shopping_list: {
+        summary: "por eso comenzar por una lista de compras clara puede ayudarte a aprovechar mejor lo que ya tienes.",
+        offerIntro: "Como elegiste una lista de compras clara, la presentación te mostrará cómo las listas semanales ayudan a comprar con más intención."
+      },
+      recipes: {
+        summary: "por eso comenzar por recetas simples y sustituciones puede ayudarte a resolver comidas rápidas sin improvisar.",
+        offerIntro: "Como elegiste recetas rápidas y sustituciones, la presentación te mostrará cómo usar preparaciones simples y alternativas para adaptar cada comida."
+      }
     };
 
     const flow = {
       start: {
         progress: 5,
         bot: [
-          "Hola. Soy Ana, la asistente virtual del equipo Ruta Alimentaria 21.",
-          "¿Todo bien?",
-          "Este cuestionario sirve para entender tu rutina y mostrarte si Ruta Alimentaria 21 puede ayudarte en pocos segundos.",
-          "Es rápido."
+          "Hola, soy Ana, la asistente virtual de Ruta Alimentaria 21.",
+          "En menos de dos minutos voy a ayudarte a identificar una forma más práctica de organizar tus comidas según tu tiempo, presupuesto y rutina.",
+          "¿Qué te gustaría facilitar primero?"
         ],
         options: [
-          ["Quiero comenzar", "goal_start"],
-          ["Quiero saber cómo funciona", "intro_how"],
-          ["Prefiero conocer qué recibiré", "intro_content"]
-        ]
-      },
-      intro_how: {
-        progress: 8,
-        bot: [
-          "Funciona como una orientación rápida: primero entiendo tu rutina y después te muestro la parte del programa que encaja mejor con lo que necesitas.",
-          "No es una consulta médica ni un diagnóstico; es un material educativo para organizar comidas, compras y sustituciones."
-        ],
-        options: [
-          ["Quiero comenzar", "goal_start"],
-          ["Ver qué recibiré", "intro_content"],
-          ["Quiero saber para quién es", "audience"]
-        ]
-      },
-      intro_content: {
-        progress: 8,
-        bot: [
-          "Ruta Alimentaria 21 reúne un plan de comidas, listas de compras, recetas sencillas, sustituciones y un planificador semanal.",
-          "Para mostrarte la oferta correcta, necesito entender primero cuál es tu principal dificultad."
-        ],
-        options: [
-          ["Organizar mis comidas", "goal_organization", { primaryGoal: "organization" }],
-          ["Ahorrar tiempo al cocinar", "goal_time", { primaryGoal: "time" }],
-          ["Comer mejor sin gastar de más", "goal_budget", { primaryGoal: "budget" }]
+          ["Dejar de improvisar cada comida", "goal_organization", { primaryGoal: "organization" }],
+          ["Cocinar sin perder tanto tiempo", "goal_time", { primaryGoal: "time" }],
+          ["Organizarme sin gastar de más", "goal_budget", { primaryGoal: "budget" }]
         ]
       },
       goal_start: {
@@ -757,9 +907,9 @@
           "Elige una de las opciones abajo:"
         ],
         options: [
-          ["Quiero organizar mis comidas", "goal_organization", { primaryGoal: "organization" }],
-          ["Quiero ahorrar tiempo al cocinar", "goal_time", { primaryGoal: "time" }],
-          ["Quiero comer mejor sin gastar de más", "goal_budget", { primaryGoal: "budget" }]
+          ["Dejar de improvisar cada comida", "goal_organization", { primaryGoal: "organization" }],
+          ["Cocinar sin perder tanto tiempo", "goal_time", { primaryGoal: "time" }],
+          ["Organizarme sin gastar de más", "goal_budget", { primaryGoal: "budget" }]
         ]
       },
       goal_organization: {
@@ -807,7 +957,7 @@
         options: [
           ["Tengo entre 10 y 15 minutos", "household", { availableTime: "10_15" }],
           ["Normalmente tengo entre 20 y 30 minutos", "household", { availableTime: "20_30" }],
-          ["Mi tiempo cambia mucho segun el dia", "household", { availableTime: "variable" }]
+          ["Mi tiempo cambia mucho según el día", "household", { availableTime: "variable" }]
         ]
       },
       household: {
@@ -834,51 +984,52 @@
       personalized_summary: {
         progress: 62,
         bot: [
-          "Por lo que me contaste, no necesitas más información suelta.",
-          "Necesitas {{pain.desiredOutcome}}, considerando que cocinas {{household.text}} y que tu tiempo disponible es {{time.text}}.",
-          "Ruta Alimentaria 21 fue organizada precisamente para facilitar ese proceso."
+          "Por lo que me contaste, el problema no es que te falten ganas de organizarte.",
+          "Necesitas {{pain.desiredOutcome}}.",
+          "Como {{time.natural}} y cocinas {{household.text}}, {{support.summary}}"
         ],
         options: [
           ["Quiero ver cómo funciona", "how_it_works"],
           ["Quiero ver un ejemplo práctico", "practical_example"],
-          ["Quiero saber para quien es", "audience"]
+          ["Quiero saber para quién es", "audience"]
         ]
       },
       how_it_works: {
         progress: 70,
         bot: [
-          "El programa utiliza el Método 3C:",
-          "Compra simple: listas semanales con ingredientes comunes.\nCombinaciones equilibradas: modelos para organizar cada comida.\nConstancia realista: sustituciones para los días que no salen como esperabas."
+          "Ruta Alimentaria 21 utiliza el Método 3C para reducir las decisiones que normalmente dificultan mantener una rutina:",
+          "Compra simple: sabes qué comprar y cómo aprovecharlo.\nCombinaciones prácticas: no necesitas inventar una comida nueva todos los días.\nConstancia realista: si falta un ingrediente o cambia tu rutina, tienes alternativas para continuar."
         ],
         options: [
-          ["Ver que incluye el programa", "offer_content"],
+          ["Ver qué incluye el programa", "testimonial_intro"],
           ["Ver una comida de ejemplo", "practical_example"],
-          ["Saber si es para mi caso", "audience"]
+          ["Quiero ver la oferta", "testimonial_intro"]
         ]
       },
       practical_example: {
         progress: 70,
         bot: [
-          "Un dia puede organizarse con:",
-          "Una opción sencilla para la mañana.\nUna combinación de vegetales, una fuente de proteína y un acompañamiento para la comida principal.\nUna alternativa rápida para los momentos con menos tiempo.",
-          "El material presenta opciones y sustituciones para adaptar esta estructura a tu rutina."
+          "Por ejemplo, uno de los días puede incluir:",
+          "Avena con fruta para la mañana.\nArroz, lentejas y ensalada en la comida principal.\nTortilla de vegetales para una preparación rápida.\nFruta o yogur como opción sencilla entre comidas.",
+          "Si algún ingrediente no está disponible, el material presenta alternativas para adaptar la combinación."
         ],
         options: [
-          ["Ver el contenido completo", "offer_content"],
-          ["Entender las sustituciones", "substitutions_detail"],
-          ["Saber si los ingredientes son accesibles", "ingredients_detail"]
+          ["Ver el contenido completo", "testimonial_intro"],
+          ["Entender las sustituciones", "testimonial_intro"],
+          ["Saber si los ingredientes son accesibles", "testimonial_intro"]
         ]
       },
       audience: {
         progress: 70,
         bot: [
-          "Ruta Alimentaria 21 fue creada para adultos que quieren organizar mejor sus compras y comidas con una estructura práctica.",
+          "Ruta Alimentaria 21 fue creada para adultos que quieren planificar mejor sus compras y comidas con una estructura práctica.",
+          "No necesitas seguir el plan de forma perfecta. La propuesta es ofrecer una guía flexible para reducir la improvisación.",
           "Es un material educativo. No realiza diagnósticos y no sustituye una consulta médica o nutricional."
         ],
         options: [
-          ["Esto encaja con lo que busco", "offer_content"],
-          ["Quiero revisar lo que incluye", "offer_content"],
-          ["Tengo una condición de salud", "health_notice"]
+          ["Esto encaja con lo que busco", "testimonial_intro"],
+          ["Quiero revisar lo que incluye", "testimonial_intro"],
+          ["Quiero ver la oferta", "testimonial_intro"]
         ]
       },
       health_notice: {
@@ -888,76 +1039,97 @@
           "Puedes conocer el contenido educativo, pero no debes utilizarlo como sustituto de una orientación individual."
         ],
         options: [
-          ["Entendido, quiero conocer el contenido", "offer_content"],
-          ["Quiero ver la oferta", "offer_content"],
-          ["Ver el precio", "price"]
+          ["Entendido, quiero conocer el contenido", "testimonial_intro"],
+          ["Quiero ver la oferta", "testimonial_intro"],
+          ["Ver el precio", "testimonial_intro"]
         ]
       },
       substitutions_detail: {
         progress: 74,
         bot: ["{{pain.offerBridge}}.", "La idea es que una falta puntual no te obligue a abandonar toda la organización."],
         options: [
-          ["Ver el contenido completo", "offer_content"],
-          ["Quiero ver la oferta", "offer_content"],
-          ["Revisar el precio", "price"]
+          ["Ver el contenido completo", "testimonial_intro"],
+          ["Quiero ver la oferta", "testimonial_intro"],
+          ["Revisar el precio", "testimonial_intro"]
         ]
       },
       ingredients_detail: {
         progress: 74,
         bot: [
           "El enfoque prioriza ingredientes comunes y decisiones simples.",
-          "La idea es usar alimentos fáciles de encontrar y permitir cambios cuando una opción no está disponible en tu zona."
+          "El material prioriza opciones accesibles y sustituciones para adaptar las compras sin depender de productos especiales."
         ],
         options: [
-          ["Ver el contenido completo", "offer_content"],
-          ["Quiero ver la oferta", "offer_content"],
-          ["Ver el precio", "price"]
+          ["Ver el contenido completo", "testimonial_intro"],
+          ["Quiero ver la oferta", "testimonial_intro"],
+          ["Ver el precio", "testimonial_intro"]
+        ]
+      },
+      testimonial_intro: {
+        progress: 82,
+        bot: [
+          "Antes de mostrarte la presentación completa, quiero compartir algunas experiencias de personas que también buscaban una forma más simple de organizar sus comidas.",
+          "Sus principales dificultades eran muy parecidas a las que acabas de mencionar: improvisación, falta de tiempo y dificultad para mantener una estructura durante la semana."
+        ],
+        options: [
+          ["Quiero ver las experiencias", "testimonial_gallery"],
+          ["Quiero ver cómo les ayudó", "testimonial_gallery"],
+          ["Ver los testimonios antes de continuar", "testimonial_gallery"]
+        ]
+      },
+      testimonial_gallery: {
+        progress: 88,
+        testimonialGallery: true,
+        bot: [],
+        options: [
+          ["Esto se parece a lo que necesito", "testimonial_conclusion"],
+          ["Quiero entender qué recibieron", "testimonial_conclusion"],
+          ["Quiero ver la presentación completa", "testimonial_conclusion"]
+        ]
+      },
+      testimonial_conclusion: {
+        progress: 94,
+        bot: [
+          "Lo importante no es seguir un plan perfecto, sino tener una estructura que reduzca las decisiones y pueda adaptarse a tu rutina.",
+          "En la siguiente presentación verás cómo funciona Ruta Alimentaria 21, qué incluye y cómo puedes comenzar por la parte que elegiste anteriormente."
+        ],
+        options: [
+          ["Ver la presentación completa", "offer_content"],
+          ["Quiero saber qué incluye", "offer_content"],
+          ["Continuar", "offer_content"]
         ]
       },
       offer_content: {
         progress: 100,
         checkoutOnly: true,
         bot: [
-          "{{support.focus}}",
-          "Ruta Alimentaria 21 reune:",
-          "Plan de comidas para 21 días.\nListas de compras semanales.\nRecetas sencillas.\nTabla de sustituciones.\nGuía práctica para bebidas y etiquetas.\nPlanificador semanal.",
-          "El objetivo es reducir la improvisación y facilitar una rutina que puedas aplicar en la vida real.",
-          "Puedes acceder hoy por {{offer.formattedPrice}}."
-        ],
-        options: [
-          ["Ver la oferta completa", "price"],
-          ["Revisar sustituciones", "substitutions_detail"],
-          ["Leer aviso educativo", "health_notice"]
+          "{{support.offerIntro}}",
+          "En la presentación completa verás cómo Ruta Alimentaria 21 reúne:",
+          "Plan de 21 días: para saber qué preparar sin comenzar desde cero.\nListas semanales: para comprar con más claridad y aprovechar mejor los ingredientes.\nRecetas sencillas: para los días en que tienes poco tiempo.\nTabla de sustituciones: para continuar aunque falte algún ingrediente.\nPlanificador imprimible: para visualizar toda la semana en un solo lugar.",
+          "No necesitas utilizar todo al mismo tiempo. La idea es comenzar por la parte que resuelve tu principal dificultad y avanzar a tu ritmo.",
+          "En la presentación te mostraré cómo estas partes trabajan juntas y por qué empezar por la opción que elegiste puede facilitar tu semana.",
+          "Como la explicación fue preparada para dificultades como la que mencionaste, vale la pena verla hasta el final antes de decidir."
         ]
       },
       price: {
         progress: 100,
         checkoutOnly: true,
         bot: [
-          "Puedes acceder a Ruta Alimentaria 21 por {{offer.formattedPrice}}.",
-          "El acceso incluye todos los materiales presentados y se entrega después de la confirmación del pago."
-        ],
-        options: [
-          ["Revisar contenido", "offer_content"],
-          ["Ver aviso educativo", "health_notice"],
-          ["Empezar de nuevo", "start", {}, "restart"]
+          "El acceso a Ruta Alimentaria 21 está disponible por {{offer.formattedPrice}}.",
+          "Después de la confirmación del pago, recibirás las instrucciones de acceso al material."
         ]
       },
       privacy: {
         progress: 100,
+        checkoutOnly: true,
         bot: [
-          "Esta página no solicita teléfono, datos médicos ni texto libre.",
-          "Cuando el checkout definitivo esté configurado, la política de privacidad debe estar enlazada desde esa página antes de enviar tráfico."
+          "La política de privacidad será agregada antes de publicar el checkout.",
+          "Por ahora, puedes continuar a la oferta de Ruta Alimentaria 21 por {{offer.formattedPrice}}."
         ],
-        options: [
-          ["Volver a la oferta", "offer_content"],
-          ["Ver el precio", "price"],
-          ["Empezar de nuevo", "start", {}, "restart"]
-        ]
       }
     };
 
-    const STORAGE_KEY = "ruta_alimentaria_21_static_conversation_v4";
+    const STORAGE_KEY = "ruta_alimentaria_21_static_conversation_v7";
     const chat = document.getElementById("chat");
     const progress = document.getElementById("progress");
     const backBtn = document.getElementById("backBtn");
@@ -978,7 +1150,9 @@
         messages: [],
         history: [],
         phone: "",
-        noticeShown: false
+        noticeShown: false,
+        testimonialsViewed: false,
+        sessionId: window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : String(Date.now())
       };
     }
 
@@ -990,6 +1164,18 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state, savedAt: Date.now() }));
     }
 
+    function trackEvent(eventName, payload = {}) {
+      const safePayload = {
+        testimonialId: payload.testimonialId,
+        nodeId: payload.nodeId || state.nodeId,
+        sessionId: state.sessionId,
+        primaryGoal: state.profile.primaryGoal,
+        primaryPain: state.profile.primaryPain,
+        preferredSupport: state.profile.preferredSupport
+      };
+      console.debug("[analytics]", eventName, safePayload);
+    }
+
     function loadState() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -999,6 +1185,8 @@
           localStorage.removeItem(STORAGE_KEY);
           return null;
         }
+        if (typeof parsed.testimonialsViewed !== "boolean") parsed.testimonialsViewed = false;
+        if (!parsed.sessionId) parsed.sessionId = window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : String(Date.now());
         return parsed;
       } catch {
         return null;
@@ -1009,13 +1197,17 @@
       const pain = state.profile.primaryPain ? painCopy[state.profile.primaryPain] : {};
       const time = state.profile.availableTime ? timeCopy[state.profile.availableTime] : {};
       const household = state.profile.householdSize ? householdCopy[state.profile.householdSize] : "";
+      const support = state.profile.preferredSupport ? supportCopy[state.profile.preferredSupport] : {};
       return text
         .replaceAll("{{pain.recognition}}", pain.recognition || "[pendiente]")
         .replaceAll("{{pain.desiredOutcome}}", pain.desiredOutcome || "[pendiente]")
         .replaceAll("{{pain.offerBridge}}", pain.offerBridge || "[pendiente]")
         .replaceAll("{{time.intro}}", time.intro || "[pendiente]")
         .replaceAll("{{time.text}}", time.text || "[pendiente]")
+        .replaceAll("{{time.natural}}", time.natural || "tu tiempo disponible necesita una solución flexible")
         .replaceAll("{{household.text}}", household || "[pendiente]")
+        .replaceAll("{{support.summary}}", support.summary || "comenzar por una estructura clara puede ayudarte a reducir decisiones desde el primer día.")
+        .replaceAll("{{support.offerIntro}}", support.offerIntro || "Ruta Alimentaria 21 fue organizada para ayudarte a reducir decisiones y aplicar una estructura flexible durante 21 días.")
         .replaceAll("{{offer.formattedPrice}}", offer.formattedPrice)
         .replaceAll("{{offer.refundDays}}", String(offer.refundDays))
         .replaceAll("{{country.name}}", offer.countryName);
@@ -1025,7 +1217,7 @@
       if (state.noticeShown) return;
       const notice = document.createElement("div");
       notice.className = "notice";
-      notice.innerHTML = "<span>i</span><p>Esta es una orientacion automatizada del equipo y no recibe llamadas.</p>";
+      notice.innerHTML = "<span>i</span><p>Esta es una orientación automatizada del equipo y no recibe llamadas.</p>";
       chat.appendChild(notice);
       state.noticeShown = true;
     }
@@ -1078,9 +1270,108 @@
       savedMessages.forEach((message) => addMessage(message.role, message.text, message.showAvatar));
     }
 
+    function validTestimonials() {
+      return testimonials.filter((testimonial) => testimonial.active === true && testimonial.consentVerified === true);
+    }
+
+    function renderTestimonials(items) {
+      document.querySelectorAll(".testimonials-container, .testimonial-fallback").forEach((el) => el.remove());
+      state.testimonialsViewed = true;
+      trackEvent("testimonial_section_viewed", { nodeId: "testimonial_gallery" });
+
+      if (!items.length) {
+        const fallback = document.createElement("div");
+        fallback.className = "testimonial-fallback";
+        fallback.textContent = "Aún no hemos añadido experiencias verificadas en esta página. Preferimos no publicar comentarios sin poder confirmar su autenticidad.";
+        chat.appendChild(fallback);
+        scrollDown();
+        return;
+      }
+
+      const container = document.createElement("div");
+      container.className = "testimonials-container";
+      items.forEach((testimonial) => {
+        const card = document.createElement("article");
+        card.className = "testimonial-card";
+
+        const zoom = document.createElement("button");
+        zoom.className = "testimonial-zoom";
+        zoom.type = "button";
+        zoom.setAttribute("aria-label", `Ampliar ${testimonial.alt}`);
+
+        const image = document.createElement("img");
+        image.src = testimonial.image;
+        image.alt = testimonial.alt;
+        image.loading = "lazy";
+        image.addEventListener("load", () => {
+          trackEvent("testimonial_image_viewed", { testimonialId: testimonial.id, nodeId: "testimonial_gallery" });
+        });
+        image.addEventListener("error", () => {
+          card.remove();
+          console.warn(`Depoimento não carregado: ${testimonial.id}`);
+        });
+
+        zoom.appendChild(image);
+        zoom.addEventListener("click", () => openImageModal(testimonial));
+
+        const identity = document.createElement("div");
+        identity.className = "testimonial-identity";
+        const name = document.createElement("strong");
+        name.textContent = testimonial.name;
+        identity.appendChild(name);
+        if (testimonial.location) {
+          const location = document.createElement("span");
+          location.textContent = testimonial.location;
+          identity.appendChild(location);
+        }
+
+        card.append(zoom, identity);
+        container.appendChild(card);
+      });
+
+      chat.appendChild(container);
+      scrollDown();
+    }
+
+    function openImageModal(testimonial) {
+      let modal = document.getElementById("imageModal");
+      if (!modal) {
+        modal = document.createElement("div");
+        modal.className = "image-modal";
+        modal.id = "imageModal";
+        modal.setAttribute("role", "dialog");
+        modal.setAttribute("aria-modal", "true");
+        modal.innerHTML = '<button class="modal-close" type="button" aria-label="Fechar imagem ampliada">×</button><img alt="">';
+        document.body.appendChild(modal);
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) closeImageModal();
+        });
+        modal.querySelector(".modal-close").addEventListener("click", closeImageModal);
+      }
+
+      const image = modal.querySelector("img");
+      image.src = testimonial.image;
+      image.alt = testimonial.alt;
+      modal.classList.add("visible");
+      document.body.style.overflow = "hidden";
+      modal.querySelector(".modal-close").focus();
+      trackEvent("testimonial_image_expanded", { testimonialId: testimonial.id, nodeId: "testimonial_gallery" });
+    }
+
+    function closeImageModal() {
+      const modal = document.getElementById("imageModal");
+      if (!modal) return;
+      modal.classList.remove("visible");
+      document.body.style.overflow = "";
+    }
+
     function renderOptions(node) {
       document.querySelectorAll(".options, .input-block, .checkout-box").forEach((el) => el.remove());
       if (node.checkoutOnly) {
+        if (["offer_content", "price"].includes(state.nodeId) && !state.testimonialsViewed) {
+          goTo("testimonial_intro");
+          return;
+        }
         renderCheckoutLink();
         return;
       }
@@ -1104,11 +1395,11 @@
       const link = document.createElement("a");
       link.className = "checkout-link";
       link.href = offer.checkoutUrl || "#checkout-pendente";
-      link.textContent = "Ver la oferta y comprometerme a una vida mejor";
+      link.textContent = "Quiero ver la presentación completa";
       link.addEventListener("click", (event) => {
         if (!offer.checkoutUrl) {
           event.preventDefault();
-          alert("El enlace de checkout todavia no esta configurado. Cuando lo tengas, reemplaza offer.checkoutUrl dentro del index.html.");
+          alert("El enlace de checkout todavía no está configurado. Cuando lo tengas, reemplaza offer.checkoutUrl dentro del index.html.");
         }
       });
       box.appendChild(link);
@@ -1147,7 +1438,20 @@
       }
       if (action === "checkout" && openUrl(offer.checkoutUrl)) return;
       if (action === "privacy" && openUrl(offer.privacyUrl)) return;
-      goTo(nextNodeId);
+      if (state.nodeId === "testimonial_gallery") {
+        trackEvent("testimonial_next_clicked", { nodeId: state.nodeId });
+      }
+      goTo(resolveCommercialDestination(nextNodeId));
+    }
+
+    function resolveCommercialDestination(nextNodeId) {
+      const commercialNodes = new Set(["offer_content", "price"]);
+      if (!commercialNodes.has(nextNodeId)) return nextNodeId;
+      if (state.nodeId === "testimonial_conclusion") {
+        trackEvent("testimonial_offer_reached", { nodeId: nextNodeId });
+        return nextNodeId;
+      }
+      return state.testimonialsViewed ? "testimonial_conclusion" : "testimonial_intro";
     }
 
     function goTo(nodeId) {
@@ -1163,6 +1467,13 @@
         node.bot.forEach((message, index) => {
           addMessage("bot", interpolate(message), index === 0);
         });
+        if (node.testimonialGallery) {
+          renderTestimonials(validTestimonials());
+          if (validTestimonials().length) {
+            addMessage("bot", testimonialTransparency, false);
+            addMessage("bot", testimonialDisclaimer, false);
+          }
+        }
         renderOptions(node);
         saveState();
       }, delay);
@@ -1183,12 +1494,26 @@
       state.profile = previous.profile;
       state.messages = previous.messages;
       state.phone = previous.phone || "";
+      if (flow[state.nodeId].testimonialGallery) {
+        state.messages = state.messages.filter((message) => ![testimonialTransparency, testimonialDisclaimer].includes(message.text));
+      }
       renderHistoryOnly();
+      if (flow[state.nodeId].testimonialGallery) {
+        renderTestimonials(validTestimonials());
+        if (validTestimonials().length) {
+          addMessage("bot", testimonialTransparency, false);
+          addMessage("bot", testimonialDisclaimer, false);
+        }
+      }
       renderOptions(flow[state.nodeId]);
       progress.style.width = `${flow[state.nodeId].progress}%`;
       backBtn.disabled = state.history.length === 0;
       saveState();
     }
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeImageModal();
+    });
 
     function scrollDown() {
       chat.scrollTo({ top: chat.scrollHeight, behavior: "smooth" });
